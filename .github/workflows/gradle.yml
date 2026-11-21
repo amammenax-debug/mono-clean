@@ -156,6 +156,16 @@ jobs:
                       this.setInitialFocus(this.searchBox);
                   }
 
+                  private List<MonoModule> getFilteredModules() {
+                      List<MonoModule> list = new ArrayList<>();
+                      for (MonoModule m : MODULES) {
+                          if (searchQuery.isEmpty() || m.name.toLowerCase().contains(searchQuery)) {
+                              list.add(m);
+                          }
+                      }
+                      return list;
+                  }
+
                   @Override
                   public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
                       graphics.fill(0, 0, this.width, this.height, 0x70000000);
@@ -174,19 +184,19 @@ jobs:
                       graphics.drawString(this.font, "v1.0", left + 48, top + 15, 0xFF707078, false);
 
                       List<MonoModule> filtered = getFilteredModules();
-                      int cardWidth = (panelWidth - 36) / 2;
-                      int cardHeight = 42;
-                      int startX = left + 12;
+                      int cols = 2;
+                      int gap = 8;
+                      int cardWidth = (panelWidth - 28 - gap) / cols;
+                      int cardHeight = 36;
+                      int startX = left + 14;
                       int startY = top + 48;
 
                       for (int i = 0; i < filtered.size(); i++) {
                           MonoModule module = filtered.get(i);
-                          int col = i % 2;
-                          int row = i / 2;
-                          int cardX = startX + col * (cardWidth + 12);
-                          int cardY = startY + row * (cardHeight + 8);
-
-                          if (cardY + cardHeight > bottom - 8) break;
+                          int col = i % cols;
+                          int row = i / cols;
+                          int cardX = startX + col * (cardWidth + gap);
+                          int cardY = startY + row * (cardHeight + gap);
 
                           boolean hovered = mouseX >= cardX && mouseX <= cardX + cardWidth
                                   && mouseY >= cardY && mouseY <= cardY + cardHeight;
@@ -199,26 +209,3 @@ jobs:
                           graphics.fill(cardX, cardY, cardX + 3, cardY + cardHeight,
                                   module.enabled ? 0xFFFFFFFF : 0x25FFFFFF);
 
-                          graphics.drawString(this.font, module.name, cardX + 10, cardY + 8,
-                                  module.enabled ? 0xFFFFFFFF : 0xFFA0A0A8, false);
-
-                          String status = module.enabled ? "ON" : "OFF";
-                          int statusW = this.font.width(status);
-                          graphics.drawString(this.font, status, cardX + cardWidth - statusW - 10, cardY + 8,
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
-      - name: Build with Gradle
-        run: ./gradlew build
-
-      - name: Upload built mod JAR
-        uses: actions/upload-artifact@v4
-        with:
-          name: mono-mod-jar
-          path: build/libs/*.jar
