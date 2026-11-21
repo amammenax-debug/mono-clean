@@ -80,9 +80,4 @@ publishing {
 		// retrieving dependencies.
 	}
 }
-sourceSets {
-    main {
-        java.srcDirs = ['.']
-        resources.srcDirs = ['.']
-    }
-}
+
