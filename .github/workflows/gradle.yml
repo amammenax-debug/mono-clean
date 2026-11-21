@@ -205,3 +205,20 @@ jobs:
                           String status = module.enabled ? "ON" : "OFF";
                           int statusW = this.font.width(status);
                           graphics.drawString(this.font, status, cardX + cardWidth - statusW - 10, cardY + 8,
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      - name: Upload built mod JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: mono-mod-jar
+          path: build/libs/*.jar
